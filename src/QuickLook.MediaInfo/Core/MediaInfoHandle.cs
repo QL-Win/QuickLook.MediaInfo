@@ -13,61 +13,61 @@ public sealed class MediaInfoHandle : IDisposable
 {
     #region Native imports
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfo_New();
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern void MediaInfo_Delete(nint handle);
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfo_Open(nint handle, string fileName);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoA_Open(nint handle, nint fileName);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_Open_Buffer_Init(nint handle, long fileSize, long fileOffset);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_Open_Buffer_Continue(nint handle, nint buffer, nint bufferSize);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern long MediaInfo_Open_Buffer_Continue_GoTo_Get(nint handle);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_Open_Buffer_Finalize(nint handle);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern void MediaInfo_Close(nint handle);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_Inform(nint handle, nint reserved);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoA_Inform(nint handle, nint reserved);
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfo_Get(nint handle, nint streamKind, nint streamNumber, string parameter, nint kindOfInfo, nint kindOfSearch);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoA_Get(nint handle, nint streamKind, nint streamNumber, nint parameter, nint kindOfInfo, nint kindOfSearch);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_GetI(nint handle, nint streamKind, nint streamNumber, nint parameter, nint kindOfInfo);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoA_GetI(nint handle, nint streamKind, nint streamNumber, nint parameter, nint kindOfInfo);
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfo_Option(nint handle, string option, string value);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoA_Option(nint handle, nint option, nint value);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_State_Get(nint handle);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfo_Count_Get(nint handle, nint streamKind, nint streamNumber);
 
     #endregion Native imports

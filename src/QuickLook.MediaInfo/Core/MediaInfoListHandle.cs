@@ -12,39 +12,55 @@ public sealed class MediaInfoListHandle : IDisposable
 {
     #region Native imports
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoList_New();
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern void MediaInfoList_Delete(nint handle);
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfoList_Open(nint handle, string fileName, nint options);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
+    private static extern nint MediaInfoListA_Open(nint handle, nint fileName, nint options);
+
+    [DllImport(Libs.DllName)]
     private static extern void MediaInfoList_Close(nint handle, nint filePos);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoList_Inform(nint handle, nint filePos, nint reserved);
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName)]
+    private static extern nint MediaInfoListA_Inform(nint handle, nint filePos, nint reserved);
+
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfoList_Get(nint handle, nint filePos, nint streamKind, nint streamNumber, string parameter, nint kindOfInfo, nint kindOfSearch);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
+    private static extern nint MediaInfoListA_Get(nint handle, nint filePos, nint streamKind, nint streamNumber, nint parameter, nint kindOfInfo, nint kindOfSearch);
+
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoList_GetI(nint handle, nint filePos, nint streamKind, nint streamNumber, nint parameter, nint kindOfInfo);
 
-    [DllImport(Libs.Windows, CharSet = CharSet.Unicode)]
+    [DllImport(Libs.DllName)]
+    private static extern nint MediaInfoListA_GetI(nint handle, nint filePos, nint streamKind, nint streamNumber, nint parameter, nint kindOfInfo);
+
+    [DllImport(Libs.DllName, CharSet = CharSet.Unicode)]
     private static extern nint MediaInfoList_Option(nint handle, string option, string value);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
+    private static extern nint MediaInfoListA_Option(nint handle, nint option, nint value);
+
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoList_State_Get(nint handle);
 
-    [DllImport(Libs.Windows)]
+    [DllImport(Libs.DllName)]
     private static extern nint MediaInfoList_Count_Get(nint handle, nint filePos, nint streamKind, nint streamNumber);
 
     #endregion Native imports
 
     private bool _disposed;
+    private readonly bool _useAnsi;
 
     private nint Handle { get; }
 
@@ -52,6 +68,14 @@ public sealed class MediaInfoListHandle : IDisposable
     {
         try { Handle = MediaInfoList_New(); }
         catch { Handle = IntPtr.Zero; }
+
+#if NETFRAMEWORK
+        _useAnsi = false;
+#elif NET8_0_OR_GREATER
+        _useAnsi = !OperatingSystem.IsWindows();
+#else
+        _useAnsi = !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif
     }
 
     ~MediaInfoListHandle() => Dispose(false);
@@ -77,6 +101,12 @@ public sealed class MediaInfoListHandle : IDisposable
     public int Open(string fileName, InfoFileOptions options = InfoFileOptions.FileOption_Nothing)
     {
         if (Handle == IntPtr.Zero) return 0;
+        if (_useAnsi)
+        {
+            nint ptr = Marshal.StringToHGlobalAnsi(fileName);
+            try { return (int)MediaInfoListA_Open(Handle, ptr, (nint)options); }
+            finally { Marshal.FreeHGlobal(ptr); }
+        }
         return (int)MediaInfoList_Open(Handle, fileName, (nint)options);
     }
 
@@ -89,13 +119,26 @@ public sealed class MediaInfoListHandle : IDisposable
     public string Inform(int filePos = 0)
     {
         if (Handle == IntPtr.Zero) return string.Empty;
-        return Marshal.PtrToStringUni(MediaInfoList_Inform(Handle, filePos, 0)) ?? string.Empty;
+        return _useAnsi
+            ? Marshal.PtrToStringAnsi(MediaInfoListA_Inform(Handle, filePos, 0)) ?? string.Empty
+            : Marshal.PtrToStringUni(MediaInfoList_Inform(Handle, filePos, 0)) ?? string.Empty;
     }
 
     public string Get(int filePos, StreamKind streamKind, int streamNumber, string parameter,
         InfoKind kindOfInfo = InfoKind.Text, InfoKind kindOfSearch = InfoKind.Name)
     {
         if (Handle == IntPtr.Zero) return string.Empty;
+        if (_useAnsi)
+        {
+            nint paramPtr = Marshal.StringToHGlobalAnsi(parameter);
+            try
+            {
+                return Marshal.PtrToStringAnsi(
+                    MediaInfoListA_Get(Handle, filePos, (nint)streamKind, streamNumber, paramPtr,
+                        (nint)kindOfInfo, (nint)kindOfSearch)) ?? string.Empty;
+            }
+            finally { Marshal.FreeHGlobal(paramPtr); }
+        }
         return Marshal.PtrToStringUni(
             MediaInfoList_Get(Handle, filePos, (nint)streamKind, streamNumber, parameter,
                 (nint)kindOfInfo, (nint)kindOfSearch)) ?? string.Empty;
@@ -105,13 +148,28 @@ public sealed class MediaInfoListHandle : IDisposable
         InfoKind kindOfInfo = InfoKind.Text)
     {
         if (Handle == IntPtr.Zero) return string.Empty;
-        return Marshal.PtrToStringUni(
-            MediaInfoList_GetI(Handle, filePos, (nint)streamKind, streamNumber, parameter, (nint)kindOfInfo)) ?? string.Empty;
+        return _useAnsi
+            ? Marshal.PtrToStringAnsi(MediaInfoListA_GetI(Handle, filePos, (nint)streamKind, streamNumber, parameter, (nint)kindOfInfo)) ?? string.Empty
+            : Marshal.PtrToStringUni(MediaInfoList_GetI(Handle, filePos, (nint)streamKind, streamNumber, parameter, (nint)kindOfInfo)) ?? string.Empty;
     }
 
     public string Option(string option, string value = "")
     {
         if (Handle == IntPtr.Zero) return string.Empty;
+        if (_useAnsi)
+        {
+            nint optPtr = Marshal.StringToHGlobalAnsi(option);
+            nint valPtr = Marshal.StringToHGlobalAnsi(value);
+            try
+            {
+                return Marshal.PtrToStringAnsi(MediaInfoListA_Option(Handle, optPtr, valPtr)) ?? string.Empty;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(optPtr);
+                Marshal.FreeHGlobal(valPtr);
+            }
+        }
         return Marshal.PtrToStringUni(MediaInfoList_Option(Handle, option, value)) ?? string.Empty;
     }
 
