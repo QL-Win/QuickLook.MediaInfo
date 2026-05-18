@@ -10,4 +10,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Resource Include="Resource\Plugin\Custom\*.csv" />
+        <Resource Include="Resource\Plugin\Language\*.csv" />
+        <Resource Include="Resource\Plugin\Sheet\*.csv" />
+        <Resource Include="Resource\Plugin\Tree\*.csv" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resource\Plugin\Custom\*.csv" />
+        <EmbeddedResource Include="Resource\Plugin\Language\*.csv" />
+        <EmbeddedResource Include="Resource\Plugin\Sheet\*.csv" />
+        <EmbeddedResource Include="Resource\Plugin\Tree\*.csv" />
+    </ItemGroup>
+
 </Project>
