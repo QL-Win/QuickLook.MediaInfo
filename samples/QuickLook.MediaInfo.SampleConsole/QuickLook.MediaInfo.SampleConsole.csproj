@@ -3,8 +3,8 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0-windows</TargetFramework>
-        <RootNamespace>QuickLook.MediaInfo.ConsoleTest</RootNamespace>
-        <AssemblyName>QuickLook.MediaInfo.ConsoleTest</AssemblyName>
+        <RootNamespace>QuickLook.MediaInfo.SampleConsole</RootNamespace>
+        <AssemblyName>QuickLook.MediaInfo.SampleConsole</AssemblyName>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>

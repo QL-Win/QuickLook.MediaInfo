@@ -1,4 +1,4 @@
 <Solution>
   <Project Path="src/QuickLook.MediaInfo/QuickLook.MediaInfo.csproj" />
-  <Project Path="tests/QuickLook.MediaInfo.ConsoleTest/QuickLook.MediaInfo.ConsoleTest.csproj" />
+  <Project Path="samples/QuickLook.MediaInfo.SampleConsole/QuickLook.MediaInfo.SampleConsole.csproj" />
 </Solution>
