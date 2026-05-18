@@ -2,14 +2,52 @@
 
     <PropertyGroup>
         <TargetFrameworks>net462;net472;net48;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+        <LangVersion>preview</LangVersion>
         <RootNamespace>QuickLook.MediaInfo</RootNamespace>
         <AssemblyName>QuickLook.MediaInfo</AssemblyName>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <ImplicitUsings>enable</ImplicitUsings>
+        <PackageVersion>26.1.0</PackageVersion>
+        <AssemblyVersion>26.1.0</AssemblyVersion>
+        <FileVersion>26.1.0</FileVersion>
+        <Version>$(VersionPrefix)26.1.0</Version>
+        <Authors>QL-Win</Authors>
+        <Company>QL-Win</Company>
+        <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
+        <Title>QuickLook.MediaInfo</Title>
+        <Description>The MediaInfoLib .NET Wrapper.</Description>
+        <PackageProjectUrl>https://github.com/QL-Win/QuickLook.MediaInfo</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/QL-Win/QuickLook.MediaInfo</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>mediainfo</PackageTags>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageIcon>Logo.png</PackageIcon>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IncludeSource>true</IncludeSource>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="..\..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\nuget\Logo.png">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+    
     <ItemGroup>
         <Resource Include="Resource\Plugin\Custom\*.csv" />
         <Resource Include="Resource\Plugin\Language\*.csv" />
