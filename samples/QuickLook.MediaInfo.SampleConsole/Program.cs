@@ -111,7 +111,7 @@ if (!File.Exists(filePath))
 }
 
 // Resolve language
-Language_ISO639? language = ResolveLanguage(languageArg);
+MediaInfoLanguage? language = ResolveLanguage(languageArg);
 
 // Resolve format
 var format = ResolveFormat(formatArg, out string? effectiveCustomTemplate);
@@ -169,19 +169,19 @@ static MediaInfoOptions.InformFormat ResolveFormat(string? formatArg, out string
     };
 }
 
-static Language_ISO639? ResolveLanguage(string? code)
+static MediaInfoLanguage? ResolveLanguage(string? code)
 {
     if (string.IsNullOrEmpty(code)) return null;
 
     // Match by description attribute
-    foreach (Language_ISO639 lang in Enum.GetValues<Language_ISO639>())
+    foreach (MediaInfoLanguage lang in Enum.GetValues<MediaInfoLanguage>())
     {
         if (lang.ToCode().Equals(code, StringComparison.OrdinalIgnoreCase))
             return lang;
     }
 
     // Match by enum name
-    if (Enum.TryParse<Language_ISO639>(code, ignoreCase: true, out var byName))
+    if (Enum.TryParse<MediaInfoLanguage>(code, ignoreCase: true, out var byName))
         return byName;
 
     Console.Error.WriteLine($"Warning: unknown language code '{code}', using default (English).");

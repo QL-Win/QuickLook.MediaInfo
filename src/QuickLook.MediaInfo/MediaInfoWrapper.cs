@@ -210,7 +210,7 @@ public class MediaInfoWrapper
     public static string GetInform(
         string filePath,
         MediaInfoOptions.InformFormat format = MediaInfoOptions.InformFormat.Text,
-        Language_ISO639? language = null,
+        MediaInfoLanguage? language = null,
         string? customTemplate = null)
     {
         using var mi = new MediaInfoHandle();
@@ -233,7 +233,7 @@ public class MediaInfoWrapper
             MediaInfoOptions.InformFormat.HTML => "HTML",
             MediaInfoOptions.InformFormat.CSV => "CSV",
             MediaInfoOptions.InformFormat.Custom => customTemplate ?? string.Empty,
-            _ => string.Empty, // Text is the default
+            _ => string.Empty, // Text / Tree are the default
         };
 
         if (!string.IsNullOrEmpty(informValue))

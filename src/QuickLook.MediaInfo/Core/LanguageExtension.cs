@@ -6,7 +6,7 @@ using System.Text;
 namespace QuickLook.MediaInfo.Core;
 
 /// <summary>
-/// Extension methods for <see cref="Language_ISO639"/> and <see cref="CultureInfo"/>
+/// Extension methods for <see cref="MediaInfoLanguage"/> and <see cref="CultureInfo"/>
 /// that produce the language parameter value expected by MediaInfo's <c>Language</c> option.
 /// </summary>
 public static class LanguageExtension
@@ -16,20 +16,20 @@ public static class LanguageExtension
         .Split(';');
 
     /// <summary>
-    /// Converts a <see cref="Language_ISO639"/> value to its ISO 639 code string (e.g. "zh-CN").
+    /// Converts a <see cref="MediaInfoLanguage"/> value to its ISO 639 code string (e.g. "zh-CN").
     /// </summary>
-    public static string ToCode(this Language_ISO639 language)
+    public static string ToCode(this MediaInfoLanguage language)
     {
-        return typeof(Language_ISO639)
+        return typeof(MediaInfoLanguage)
             .GetField(language.ToString())
             ?.GetCustomAttribute<DescriptionAttribute>()
             ?.Description ?? "en";
     }
 
     /// <summary>
-    /// Converts a <see cref="Language_ISO639"/> to a <see cref="CultureInfo"/>.
+    /// Converts a <see cref="MediaInfoLanguage"/> to a <see cref="CultureInfo"/>.
     /// </summary>
-    public static CultureInfo ToCultureInfo(this Language_ISO639 language)
+    public static CultureInfo ToCultureInfo(this MediaInfoLanguage language)
     {
         string code = language.ToCode();
         try
@@ -43,10 +43,10 @@ public static class LanguageExtension
     }
 
     /// <summary>
-    /// Converts a <see cref="Language_ISO639"/> to the ISO 639 CSV content
+    /// Converts a <see cref="MediaInfoLanguage"/> to the ISO 639 CSV content
     /// that can be passed directly to <c>Option("Language", value)</c>.
     /// </summary>
-    public static string ToIso639(this Language_ISO639 language)
+    public static string ToIso639(this MediaInfoLanguage language)
         => language.ToCultureInfo().ToIso639();
 
     /// <summary>

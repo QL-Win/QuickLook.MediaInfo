@@ -187,17 +187,17 @@ public class GetInformTests
     // -------------------------------------------------------------------------
 
     [Theory]
-    [InlineData(Language_ISO639.English)]
-    [InlineData(Language_ISO639.French)]
-    [InlineData(Language_ISO639.German)]
-    [InlineData(Language_ISO639.Japanese)]
-    [InlineData(Language_ISO639.ChineseSimplified)]
-    [InlineData(Language_ISO639.ChineseTraditional)]
-    [InlineData(Language_ISO639.Korean)]
-    [InlineData(Language_ISO639.Russian)]
-    [InlineData(Language_ISO639.Spanish)]
-    [InlineData(Language_ISO639.Portuguese)]
-    public void GetInform_WithLanguage_NotEmpty(Language_ISO639 lang)
+    [InlineData(MediaInfoLanguage.English)]
+    [InlineData(MediaInfoLanguage.French)]
+    [InlineData(MediaInfoLanguage.German)]
+    [InlineData(MediaInfoLanguage.Japanese)]
+    [InlineData(MediaInfoLanguage.ChineseSimplified)]
+    [InlineData(MediaInfoLanguage.ChineseTraditional)]
+    [InlineData(MediaInfoLanguage.Korean)]
+    [InlineData(MediaInfoLanguage.Russian)]
+    [InlineData(MediaInfoLanguage.Spanish)]
+    [InlineData(MediaInfoLanguage.Portuguese)]
+    public void GetInform_WithLanguage_NotEmpty(MediaInfoLanguage lang)
     {
         string result = MediaInfoWrapper.GetInform(MediaFile, MediaInfoOptions.InformFormat.Text, lang);
         Assert.False(string.IsNullOrWhiteSpace(result));

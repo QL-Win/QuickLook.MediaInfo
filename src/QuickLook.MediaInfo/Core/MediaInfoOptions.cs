@@ -96,8 +96,11 @@ public static class MediaInfoOptions
     /// </summary>
     public enum InformFormat
     {
-        /// <summary>Default human-readable text tree view.</summary>
+        /// <summary>Default human-readable text tree view (same as Tree).</summary>
         Text,
+
+        /// <summary>Tree view — equivalent to the default text output.</summary>
+        Tree,
 
         /// <summary>XML output.</summary>
         XML,

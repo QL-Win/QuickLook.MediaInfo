@@ -6,7 +6,7 @@ namespace QuickLook.MediaInfo.Core;
 /// ISO 639 language codes supported by the MediaInfo language system.
 /// <c>ar;be;bg;ca;cs;da;de;en;es;eu;fa;fr;gl;gr;hu;id;it;ja;ko;lt;nl;pl;pt;pt-BR;ro;ru;sk;sq;sv;th;tr;uk;zh-CN;zh-HK;zh-TW;hr;hy;ka</c>
 /// </summary>
-public enum Language_ISO639
+public enum MediaInfoLanguage
 {
     [Description("en")]    English,
     [Description("fr")]    French,
