@@ -138,6 +138,12 @@ public sealed class MediaInfoHandle : IDisposable
         return MediaInfo_Open_Buffer_Init(Handle, fileSize, fileOffset);
     }
 
+    public nint OpenBufferContinue(nint buffer, nint bufferSize)
+    {
+        if (Handle == IntPtr.Zero) return IntPtr.Zero;
+        return MediaInfo_Open_Buffer_Continue(Handle, buffer, bufferSize);
+    }
+
     public unsafe nint OpenBufferContinue(byte* buffer, int bufferSize)
     {
         if (Handle == IntPtr.Zero) return IntPtr.Zero;
