@@ -22,10 +22,6 @@ public static class Libs
     public const string MacOS = "libmediainfo.dylib";
     public const string Linux = "libmediainfo.so.0";
 
-#if NET5_0_OR_GREATER
-    private static volatile int _resolverInstalled;
-#endif
-
     /// <summary>
     /// Configures the native library search path so that <c>MediaInfo</c> is resolved
     /// from <paramref name="dllDirectory"/> at runtime on all platforms.
@@ -39,9 +35,7 @@ public static class Libs
 #if NETFRAMEWORK
         if (!SetDllDirectory(dllDirectory))
             throw new Win32Exception(Marshal.GetLastWin32Error());
-#elif NET5_0_OR_GREATER
-        if (Interlocked.CompareExchange(ref _resolverInstalled, 1, 0) != 0)
-            return;
+#elif NET5_0_OR_GREATER || NETCOREAPP3_0_OR_GREATER
         NativeLibrary.SetDllImportResolver(
             typeof(Libs).Assembly,
             (name, _, _) =>
