@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>QuickLook.MediaInfo.Tests</RootNamespace>
+        <AssemblyName>QuickLook.MediaInfo.Tests</AssemblyName>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\QuickLook.MediaInfo\QuickLook.MediaInfo.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Copy example.mp4 from tests/ root to output directory -->
+        <None Update="..\example.mp4">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>example.mp4</Link>
+        </None>
+    </ItemGroup>
+
+</Project>
