@@ -52,32 +52,3 @@ internal class SubtitleStreamBuilder(MediaInfoHandle info, int number, int posit
         return SubtitleCodec.Undefined;
     }
 }
-
-internal class ChapterStreamBuilder(MediaInfoHandle info, int number, int position)
-    : MediaStreamBuilder<ChapterStream>(info, number, position)
-{
-    public override MediaStreamKind Kind => MediaStreamKind.Menu;
-    protected override StreamKind StreamKind => StreamKind.Other;
-
-    public override ChapterStream Build()
-    {
-        var result = base.Build();
-        result.StartTime = Get<TimeSpan>("Duration_Start", TagBuilderHelper.TryGetTimeSpan);
-        result.EndTime = Get<TimeSpan>("Duration_End", TagBuilderHelper.TryGetTimeSpan);
-        return result;
-    }
-}
-
-internal class MenuStreamBuilder(MediaInfoHandle info, int number, int position)
-    : LanguageMediaStreamBuilder<MenuStream>(info, number, position)
-{
-    public override MediaStreamKind Kind => MediaStreamKind.Menu;
-    protected override StreamKind StreamKind => StreamKind.Menu;
-
-    public override MenuStream Build()
-    {
-        var result = base.Build();
-        result.Duration = Get<TimeSpan>("Duration", TagBuilderHelper.TryGetTimeSpan);
-        return result;
-    }
-}
