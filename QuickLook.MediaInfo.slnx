@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="src/QuickLook.MediaInfo/QuickLook.MediaInfo.csproj" />
   <Project Path="samples/QuickLook.MediaInfo.SampleConsole/QuickLook.MediaInfo.SampleConsole.csproj" />
+  <Project Path="samples/QuickLook.MediaInfo.TestConsole/QuickLook.MediaInfo.TestConsole.csproj" />
+  <Project Path="samples/QuickLook.MediaInfo.TestWinForms/QuickLook.MediaInfo.TestWinForms.csproj" />
   <Project Path="tests/QuickLook.MediaInfo.Tests/QuickLook.MediaInfo.Tests.csproj" />
 </Solution>
