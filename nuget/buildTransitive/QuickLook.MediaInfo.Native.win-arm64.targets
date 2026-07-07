@@ -1,0 +1,11 @@
+<Project>
+  <Target Name="QuickLookMediaInfoCopyNativeWinArm64" AfterTargets="Build">
+    <PropertyGroup>
+      <_QuickLookMediaInfoNativeSource>$(MSBuildThisFileDirectory)..\runtimes\win-arm64\native\MediaInfo.dll</_QuickLookMediaInfoNativeSource>
+      <_QuickLookMediaInfoNativeOutputDir>$(TargetDir)win-arm64\</_QuickLookMediaInfoNativeOutputDir>
+      <_QuickLookMediaInfoNativeDestination>$(_QuickLookMediaInfoNativeOutputDir)MediaInfo.dll</_QuickLookMediaInfoNativeDestination>
+    </PropertyGroup>
+    <MakeDir Directories="$(_QuickLookMediaInfoNativeOutputDir)" Condition="Exists('$(_QuickLookMediaInfoNativeSource)')" />
+    <Copy SourceFiles="$(_QuickLookMediaInfoNativeSource)" DestinationFiles="$(_QuickLookMediaInfoNativeDestination)" SkipUnchangedFiles="true" Condition="Exists('$(_QuickLookMediaInfoNativeSource)')" />
+  </Target>
+</Project>

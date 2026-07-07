@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>QuickLook.MediaInfo.Native.win-arm64</id>
+    <version>26.1.0</version>
+    <authors>QL-Win</authors>
+    <owners>QL-Win</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Native MediaInfo.dll for QuickLook.MediaInfo on Windows ARM64.</description>
+    <summary>Windows ARM64 native assets for QuickLook.MediaInfo.</summary>
+    <packageTypes>
+      <packageType name="Native" />
+    </packageTypes>
+  </metadata>
+  <files>
+    <file src="lib\win-arm64\MediaInfo.dll" target="runtimes\win-arm64\native" />
+    <file src="buildTransitive\QuickLook.MediaInfo.Native.win-arm64.targets" target="buildTransitive" />
+  </files>
+</package>
