@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/build/">
+    <File Path="build/QuickLook.MediaInfo.Native.win-arm64.nuspec" />
+    <File Path="build/QuickLook.MediaInfo.Native.win-x64.nuspec" />
+    <File Path="build/QuickLook.MediaInfo.Native.win-x86.nuspec" />
+  </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/QuickLook.MediaInfo.SampleConsole/QuickLook.MediaInfo.SampleConsole.csproj" />
   </Folder>
@@ -7,7 +12,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/QuickLook.MediaInfo.TestConsole/QuickLook.MediaInfo.TestConsole.csproj" />
-    <Project Path="tests/QuickLook.MediaInfo.TestWinForms/QuickLook.MediaInfo.TestWinForms.csproj" />
     <Project Path="tests/QuickLook.MediaInfo.Tests/QuickLook.MediaInfo.Tests.csproj" />
+    <Project Path="tests/QuickLook.MediaInfo.TestWinForms/QuickLook.MediaInfo.TestWinForms.csproj" />
   </Folder>
 </Solution>
