@@ -74,5 +74,9 @@ finally {
 
 Write-Host "Packed 3 native packages into $resolvedOutputDirectory"
 
-Write-Host "`nPress any key to exit..."
-[void][System.Console]::ReadKey($true)
+if ([Environment]::UserInteractive -and
+    $Host.Name -eq 'ConsoleHost' -and
+    -not [Console]::IsInputRedirected) {
+    Write-Host "`nPress any key to exit..."
+    [void][System.Console]::ReadKey($true)
+}

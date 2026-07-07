@@ -6,6 +6,10 @@
     <authors>QL-Win</authors>
     <owners>QL-Win</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <projectUrl>https://github.com/QL-Win/QuickLook.MediaInfo</projectUrl>
+    <repository type="git" url="https://github.com/QL-Win/QuickLook.MediaInfo" />
+    <icon>Logo.png</icon>
     <description>Native MediaInfo.dll for QuickLook.MediaInfo on Windows x64.</description>
     <summary>Windows x64 native assets for QuickLook.MediaInfo.</summary>
     <packageTypes>
@@ -15,5 +19,7 @@
   <files>
     <file src="lib\win-x64\MediaInfo.dll" target="runtimes\win-x64\native" />
     <file src="buildTransitive\QuickLook.MediaInfo.Native.win-x64.targets" target="buildTransitive" />
+    <file src="..\LICENSE" target="LICENSE" />
+    <file src="Logo.png" target="" />
   </files>
 </package>
