@@ -42,7 +42,7 @@
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
-        <None Include="..\..\nuget\Logo.png">
+        <None Include="..\..\build\Logo.png">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>

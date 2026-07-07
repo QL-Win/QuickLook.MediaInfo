@@ -1,8 +1,27 @@
-param(
+﻿param(
     [string]$OutputDirectory = '.',
     [string]$NuGetExe = (Join-Path $env:TEMP 'QuickLook.MediaInfo.NuGet\nuget.exe')
 )
 
+Set-Location $PSScriptRoot
+
+Write-Host @"
+███╗   ██╗██╗   ██╗ ██████╗ ███████╗████████╗
+████╗  ██║██║   ██║██╔════╝ ██╔════╝╚══██╔══╝
+██╔██╗ ██║██║   ██║██║  ███╗█████╗     ██║   
+██║╚██╗██║██║   ██║██║   ██║██╔══╝     ██║   
+██║ ╚████║╚██████╔╝╚██████╔╝███████╗   ██║   
+╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   
+"@
+
+Write-Host "`Start to pack QuickLook.MediaInfo ..."
+Push-Location "..\src\QuickLook.MediaInfo"
+dotnet restore
+dotnet build -c Release
+dotnet pack -c Release -o ../../build/
+Pop-Location
+
+Write-Host "`Start to pack QuickLook.MediaInfo.Native ..."
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -54,3 +73,6 @@ finally {
 }
 
 Write-Host "Packed 3 native packages into $resolvedOutputDirectory"
+
+Write-Host "`nPress any key to exit..."
+[void][System.Console]::ReadKey($true)

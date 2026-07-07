@@ -1,5 +1,4 @@
 <Solution>
-  <Folder Name="/nuget/" />
   <Folder Name="/samples/">
     <Project Path="samples/QuickLook.MediaInfo.SampleConsole/QuickLook.MediaInfo.SampleConsole.csproj" />
   </Folder>
