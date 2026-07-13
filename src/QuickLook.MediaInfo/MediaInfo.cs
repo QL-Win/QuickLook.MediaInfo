@@ -28,8 +28,7 @@ public sealed class MediaInfo : IDisposable
     /// </param>
     public MediaInfo(string? dllDirectory = null)
     {
-        if (dllDirectory != null)
-            Libs.LoadDll(dllDirectory);
+        Libs.LoadDll(dllDirectory);
 
         _handle = new MediaInfoHandle();
     }
