@@ -5,4 +5,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Justification = "<Pending>", Scope = "namespace", Target = "~N:QuickLook.MediaInfo")]
+[assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure")]
+[assembly: SuppressMessage("Style", "IDE0057:Use range operator")]
+[assembly: SuppressMessage("Performance", "CA1845:Use span-based 'string.Concat'")]

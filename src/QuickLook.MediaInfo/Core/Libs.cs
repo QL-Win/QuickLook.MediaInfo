@@ -162,14 +162,15 @@ public static class Libs
         }
 
         if (packageRoot != null && packageRoot != appBase && packageRoot != assemblyDir)
-            return new string?[] { appBase, assemblyDir, packageRoot };
+            return [appBase, assemblyDir, packageRoot];
 
-        return new string?[] { appBase, assemblyDir };
+        return [appBase, assemblyDir];
     }
 
 #if NETFRAMEWORK
 
     // Machine architecture constants used by IsWow64Process2
+
     private const ushort IMAGE_FILE_MACHINE_I386 = 0x014C;
     private const ushort IMAGE_FILE_MACHINE_AMD64 = 0x8664;
     private const ushort IMAGE_FILE_MACHINE_ARM64 = 0xAA64;
@@ -177,7 +178,7 @@ public static class Libs
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool IsWow64Process2(
-        IntPtr hProcess, out ushort pProcessMachine, out ushort pNativeMachine);
+        nint hProcess, out ushort pProcessMachine, out ushort pNativeMachine);
 
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     [return: MarshalAs(UnmanagedType.Bool)]
