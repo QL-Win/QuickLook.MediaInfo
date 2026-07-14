@@ -10,14 +10,14 @@
     <projectUrl>https://github.com/QL-Win/QuickLook.MediaInfo</projectUrl>
     <repository type="git" url="https://github.com/QL-Win/QuickLook.MediaInfo" />
     <icon>Logo.png</icon>
-    <description>Native libmediainfo.0.dylib for QuickLook.MediaInfo on macOS x64.</description>
+    <description>Native libmediainfo.dylib for QuickLook.MediaInfo on macOS x64.</description>
     <summary>macOS x64 native assets for QuickLook.MediaInfo.</summary>
     <packageTypes>
       <packageType name="Native" />
     </packageTypes>
   </metadata>
   <files>
-    <file src="lib\osx-x64\libmediainfo.0.dylib" target="runtimes\osx-x64\native" />
+    <file src="lib\osx-x64\libmediainfo.dylib" target="runtimes\osx-x64\native" />
     <file src="buildTransitive\QuickLook.MediaInfo.Native.osx-x64.targets" target="buildTransitive" />
     <file src="..\LICENSE" target="LICENSE" />
     <file src="Logo.png" target="" />

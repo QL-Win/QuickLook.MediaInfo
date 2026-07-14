@@ -118,6 +118,16 @@ try {
                 Get-ChildItem -Path $subDir -File | Move-Item -Destination $targetDir -Force
                 Remove-Item -Path $subDir -Recurse -Force
             }
+
+            # Resolve symlink: libmediainfo.dylib is a symlink -> libmediainfo.0.dylib.
+            # Remove the 0-byte symlink and rename the actual binary.
+            $linkFile = Join-Path $targetDir 'libmediainfo.dylib'
+            $realFile = Join-Path $targetDir 'libmediainfo.0.dylib'
+            if ((Test-Path $linkFile) -and (Get-Item $linkFile).Length -eq 0 -and (Test-Path $realFile)) {
+                Remove-Item -Path $linkFile -Force
+                Rename-Item -Path $realFile -NewName 'libmediainfo.dylib'
+                Write-Host "[macOS] Resolved symlink: libmediainfo.0.dylib -> libmediainfo.dylib"
+            }
         }
         finally {
             Remove-Item -Path $tempTar -Force -ErrorAction SilentlyContinue
