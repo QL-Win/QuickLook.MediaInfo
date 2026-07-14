@@ -28,7 +28,9 @@ $ErrorActionPreference = 'Stop'
 $nuspecFiles = @(
     'QuickLook.MediaInfo.Native.win-arm64.nuspec',
     'QuickLook.MediaInfo.Native.win-x64.nuspec',
-    'QuickLook.MediaInfo.Native.win-x86.nuspec'
+    'QuickLook.MediaInfo.Native.win-x86.nuspec',
+    'QuickLook.MediaInfo.Native.osx-x64.nuspec',
+    'QuickLook.MediaInfo.Native.osx-arm64.nuspec'
 )
 
 function Resolve-NuGetExe {
@@ -72,7 +74,7 @@ finally {
     Pop-Location
 }
 
-Write-Host "Packed 3 native packages into $resolvedOutputDirectory"
+Write-Host "Packed $($nuspecFiles.Count) native packages into $resolvedOutputDirectory"
 
 if ([Environment]::UserInteractive -and
     $Host.Name -eq 'ConsoleHost' -and
