@@ -29,8 +29,7 @@ $nuspecFiles = @(
     'QuickLook.MediaInfo.Native.win-arm64.nuspec',
     'QuickLook.MediaInfo.Native.win-x64.nuspec',
     'QuickLook.MediaInfo.Native.win-x86.nuspec',
-    'QuickLook.MediaInfo.Native.osx-x64.nuspec',
-    'QuickLook.MediaInfo.Native.osx-arm64.nuspec'
+    'QuickLook.MediaInfo.Native.osx-x64.nuspec'
 )
 
 function Resolve-NuGetExe {

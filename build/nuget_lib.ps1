@@ -18,7 +18,7 @@ $script:WinArchMapping = @{
 # macOS: platform mapping for MediaInfo_DLL_*_Mac_* archive (universal binary)
 # -------------------------------------------------------------------
 $script:MacArchMapping = @{
-    'Mac_x86_64\+arm64' = @('osx-x64', 'osx-arm64')
+    'Mac_x86_64\+arm64' = 'osx-x64'
 }
 
 function Find-7zExe {
@@ -87,8 +87,8 @@ try {
     $macArchives = Get-ChildItem -Path $PSScriptRoot -Filter 'MediaInfo_DLL_*_Mac_*.tar.bz2'
 
     foreach ($archive in $macArchives) {
-        $platforms = Get-MacPlatformsFromFilename -Name $archive.BaseName
-        if (-not $platforms) {
+        $platform = Get-MacPlatformsFromFilename -Name $archive.BaseName
+        if (-not $platform) {
             Write-Host "[macOS] Warning: Could not determine platform from '$($archive.Name)', skipping."
             continue
         }
@@ -103,22 +103,20 @@ try {
         }
 
         try {
-            foreach ($platform in $platforms) {
-                $targetDir = Join-Path $LibDir $platform
-                New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+            $targetDir = Join-Path $LibDir $platform
+            New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
 
-                Write-Host "[macOS] Extracting libmediainfo*.dylib from tar -> $targetDir"
-                & $7zExe x $tempTar -o"$targetDir" -y -bso0 -bsp0 MediaInfoLib/libmediainfo.0.dylib MediaInfoLib/libmediainfo.dylib
-                if ($LASTEXITCODE -ne 0) {
-                    throw "[macOS] tar extraction failed for $($archive.Name) (platform: $platform) with exit code $LASTEXITCODE"
-                }
+            Write-Host "[macOS] Extracting libmediainfo*.dylib from tar -> $targetDir"
+            & $7zExe x $tempTar -o"$targetDir" -y -bso0 -bsp0 MediaInfoLib/libmediainfo.0.dylib MediaInfoLib/libmediainfo.dylib
+            if ($LASTEXITCODE -ne 0) {
+                throw "[macOS] tar extraction failed for $($archive.Name) (platform: $platform) with exit code $LASTEXITCODE"
+            }
 
-                # Flatten: move dylib files from MediaInfoLib/ to targetDir root, remove empty folder
-                $subDir = Join-Path $targetDir 'MediaInfoLib'
-                if (Test-Path $subDir) {
-                    Get-ChildItem -Path $subDir -File | Move-Item -Destination $targetDir -Force
-                    Remove-Item -Path $subDir -Recurse -Force
-                }
+            # Flatten: move dylib files from MediaInfoLib/ to targetDir root, remove empty folder
+            $subDir = Join-Path $targetDir 'MediaInfoLib'
+            if (Test-Path $subDir) {
+                Get-ChildItem -Path $subDir -File | Move-Item -Destination $targetDir -Force
+                Remove-Item -Path $subDir -Recurse -Force
             }
         }
         finally {
