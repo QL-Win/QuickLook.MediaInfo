@@ -5,10 +5,20 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$script:ArchMapping = @{
+# -------------------------------------------------------------------
+# Windows: platform mapping for MediaInfo_DLL_*_Windows_*_WithoutInstaller
+# -------------------------------------------------------------------
+$script:WinArchMapping = @{
     'x64'   = 'win-x64'
     'i386'  = 'win-x86'
     'ARM64' = 'win-arm64'
+}
+
+# -------------------------------------------------------------------
+# macOS: platform mapping for MediaInfo_DLL_*_Mac_* archive (universal binary)
+# -------------------------------------------------------------------
+$script:MacArchMapping = @{
+    'Mac_x86_64\+arm64' = @('osx-x64', 'osx-arm64')
 }
 
 function Find-7zExe {
@@ -27,9 +37,19 @@ function Find-7zExe {
 
 function Get-PlatformFromFilename {
     param([string]$Name)
-    foreach ($key in $script:ArchMapping.Keys) {
+    foreach ($key in $script:WinArchMapping.Keys) {
         if ($Name -match $key) {
-            return $script:ArchMapping[$key]
+            return $script:WinArchMapping[$key]
+        }
+    }
+    return $null
+}
+
+function Get-MacPlatformsFromFilename {
+    param([string]$Name)
+    foreach ($key in $script:MacArchMapping.Keys) {
+        if ($Name -match $key) {
+            return $script:MacArchMapping[$key]
         }
     }
     return $null
@@ -38,32 +58,73 @@ function Get-PlatformFromFilename {
 $7zExe = Find-7zExe
 Push-Location $PSScriptRoot
 try {
-    $archives = Get-ChildItem -Path $PSScriptRoot -Filter 'MediaInfo_DLL_*_Windows_*_WithoutInstaller.*' |
+    # -------------------------------------------------------------------
+    # Windows: extract MediaInfo.dll from .7z / .zip
+    # -------------------------------------------------------------------
+    $winArchives = Get-ChildItem -Path $PSScriptRoot -Filter 'MediaInfo_DLL_*_Windows_*_WithoutInstaller.*' |
         Where-Object { $_.Extension -match '\.(7z|zip)$' }
 
-    if (-not $archives) {
-        Write-Host 'No MediaInfo DLL archives found matching the pattern.'
-        return
-    }
-
-    foreach ($archive in $archives) {
+    foreach ($archive in $winArchives) {
         $platform = Get-PlatformFromFilename -Name $archive.BaseName
         if (-not $platform) {
-            Write-Host "Warning: Could not determine platform from '$($archive.Name)', skipping."
+            Write-Host "[Win] Warning: Could not determine platform from '$($archive.Name)', skipping."
             continue
         }
 
         $targetDir = Join-Path $LibDir $platform
         New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
 
-        Write-Host "Extracting MediaInfo.dll from $($archive.Name) -> $targetDir"
+        Write-Host "[Win] Extracting MediaInfo.dll from $($archive.Name) -> $targetDir"
         & $7zExe x $archive.FullName -o"$targetDir" MediaInfo.dll -y -bso0 -bsp0
         if ($LASTEXITCODE -ne 0) {
-            throw "7z extraction failed for $($archive.Name) with exit code $LASTEXITCODE"
+            throw "[Win] 7z extraction failed for $($archive.Name) with exit code $LASTEXITCODE"
         }
     }
 
-    Write-Host "All native DLLs extracted to $LibDir"
+    # -------------------------------------------------------------------
+    # macOS: extract libmediainfo.0.dylib from .tar.bz2 (universal binary)
+    # -------------------------------------------------------------------
+    $macArchives = Get-ChildItem -Path $PSScriptRoot -Filter 'MediaInfo_DLL_*_Mac_*.tar.bz2'
+
+    foreach ($archive in $macArchives) {
+        $platforms = Get-MacPlatformsFromFilename -Name $archive.BaseName
+        if (-not $platforms) {
+            Write-Host "[macOS] Warning: Could not determine platform from '$($archive.Name)', skipping."
+            continue
+        }
+
+        # Decompress .tar.bz2 to .tar in a temp location
+        $tarName = $archive.Name -replace '\.tar\.bz2$', '.tar'
+        $tempTar = Join-Path $env:TEMP $tarName
+        Write-Host "[macOS] Decompressing $($archive.Name) -> $tempTar"
+        & $7zExe x $archive.FullName -o"$env:TEMP" -y -bso0 -bsp0
+        if ($LASTEXITCODE -ne 0) {
+            throw "[macOS] bz2 decompression failed for $($archive.Name) with exit code $LASTEXITCODE"
+        }
+
+        try {
+            foreach ($platform in $platforms) {
+                $targetDir = Join-Path $LibDir $platform
+                New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+
+                Write-Host "[macOS] Extracting libmediainfo*.dylib from tar -> $targetDir"
+                & $7zExe x $tempTar -o"$targetDir" -y -bso0 -bsp0 MediaInfoLib/libmediainfo.0.dylib MediaInfoLib/libmediainfo.dylib
+                if ($LASTEXITCODE -ne 0) {
+                    throw "[macOS] tar extraction failed for $($archive.Name) (platform: $platform) with exit code $LASTEXITCODE"
+                }
+
+                # Flatten: move dylib files from MediaInfoLib/ to targetDir root, remove empty folder
+                $subDir = Join-Path $targetDir 'MediaInfoLib'
+                if (Test-Path $subDir) {
+                    Get-ChildItem -Path $subDir -File | Move-Item -Destination $targetDir -Force
+                    Remove-Item -Path $subDir -Recurse -Force
+                }
+            }
+        }
+        finally {
+            Remove-Item -Path $tempTar -Force -ErrorAction SilentlyContinue
+        }
+    }
 }
 finally {
     Pop-Location
