@@ -9,7 +9,7 @@ namespace QuickLook.MediaInfo.Core;
 /// </summary>
 [SuppressMessage("Interoperability", "SYSLIB1054:Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time")]
 [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression")]
-public sealed class MediaInfoHandle : IDisposable
+public sealed partial class MediaInfoHandle : IDisposable
 {
     #region Native imports
 

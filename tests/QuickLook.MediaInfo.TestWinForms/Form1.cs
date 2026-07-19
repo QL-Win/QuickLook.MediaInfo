@@ -34,7 +34,7 @@ public class Form1 : Form
     private void Form1_Load(object? sender, EventArgs e)
     {
         string ToDisplay;
-        using var MI = new MediaInfo();
+        using var MI = new MediaInfoNative();
 
         ToDisplay = MI.Option("Info_Version", "0.7.0.0;MediaInfoDLL_Example_CS;0.7.0.0");
         if (ToDisplay.Length == 0)

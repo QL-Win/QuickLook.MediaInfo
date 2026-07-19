@@ -15,7 +15,7 @@ namespace QuickLook.MediaInfo;
 /// string codec = mi.Get(StreamKind.Video, 0, "Format");
 /// </code>
 /// </example>
-public sealed class MediaInfo : IDisposable
+public sealed class MediaInfoNative : IDisposable
 {
     private readonly MediaInfoHandle _handle;
 
@@ -26,7 +26,7 @@ public sealed class MediaInfo : IDisposable
     /// Directory containing the platform-specific MediaInfo native library.
     /// Pass <c>null</c> to rely on the OS default search path (or a previously configured path).
     /// </param>
-    public MediaInfo(string? dllDirectory = null)
+    public MediaInfoNative(string? dllDirectory = null)
     {
         Libs.LoadDll(dllDirectory);
 

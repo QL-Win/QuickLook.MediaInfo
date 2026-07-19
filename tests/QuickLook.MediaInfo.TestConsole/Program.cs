@@ -2,7 +2,7 @@ using QuickLook.MediaInfo;
 using QuickLook.MediaInfo.Core;
 
 string ToDisplay;
-using var MI = new MediaInfo();
+using var MI = new MediaInfoNative();
 
 ToDisplay = MI.Option("Info_Version", "0.7.0.0;MediaInfoDLL_Example_CS;0.7.0.0");
 if (ToDisplay.Length == 0)
