@@ -2,7 +2,7 @@
   <Target Name="QuickLookMediaInfoCopyNativeOsxX64" AfterTargets="Build">
     <PropertyGroup>
       <_QuickLookMediaInfoNativeSource>$(MSBuildThisFileDirectory)..\runtimes\osx-x64\native\libmediainfo.dylib</_QuickLookMediaInfoNativeSource>
-      <_QuickLookMediaInfoNativeOutputDir>$(TargetDir)osx-x64\</_QuickLookMediaInfoNativeOutputDir>
+      <_QuickLookMediaInfoNativeOutputDir>$(TargetDir)runtimes\osx-x64\native\</_QuickLookMediaInfoNativeOutputDir>
       <_QuickLookMediaInfoNativeDestination>$(_QuickLookMediaInfoNativeOutputDir)libmediainfo.dylib</_QuickLookMediaInfoNativeDestination>
     </PropertyGroup>
     <MakeDir Directories="$(_QuickLookMediaInfoNativeOutputDir)" Condition="Exists('$(_QuickLookMediaInfoNativeSource)')" />

@@ -2,7 +2,7 @@
   <Target Name="QuickLookMediaInfoCopyNativeWinX64" AfterTargets="Build">
     <PropertyGroup>
       <_QuickLookMediaInfoNativeSource>$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\MediaInfo.dll</_QuickLookMediaInfoNativeSource>
-      <_QuickLookMediaInfoNativeOutputDir>$(TargetDir)win-x64\</_QuickLookMediaInfoNativeOutputDir>
+      <_QuickLookMediaInfoNativeOutputDir>$(TargetDir)runtimes\win-x64\native\</_QuickLookMediaInfoNativeOutputDir>
       <_QuickLookMediaInfoNativeDestination>$(_QuickLookMediaInfoNativeOutputDir)MediaInfo.dll</_QuickLookMediaInfoNativeDestination>
     </PropertyGroup>
     <MakeDir Directories="$(_QuickLookMediaInfoNativeOutputDir)" Condition="Exists('$(_QuickLookMediaInfoNativeSource)')" />
