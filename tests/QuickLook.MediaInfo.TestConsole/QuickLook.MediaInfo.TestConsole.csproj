@@ -12,7 +12,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\QuickLook.MediaInfo\QuickLook.MediaInfo.csproj" />
-		<PackageReference Include="QuickLook.MediaInfo.Native.win-x64" Version="26.1.0-rc1" />
+        <PackageReference Include="QuickLook.MediaInfo.Native.win-x64" Version="26.1.0-rc2" />
     </ItemGroup>
 
 </Project>
