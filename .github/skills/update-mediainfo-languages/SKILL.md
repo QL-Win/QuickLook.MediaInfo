@@ -1,100 +1,179 @@
 ---
 name: update-mediainfo-languages
-description: "验证并更新 QuickLook.MediaInfo 项目的多语言支持列表。从 GitHub MediaInfo 仓库 Source/Resource/Plugin/Language 目录获取所有 .csv 文件列表，与 Language_ISO639.cs 和 LanguageExtension.cs 中的语言列表进行比对，增删以保持同步。Use when: updating language support, adding new languages, checking if Language_ISO639 enum is up to date with MediaInfo upstream."
-argument-hint: "可选：本地 MediaInfo 仓库路径，如 D:\\GitHub\\MediaInfo"
+description: >-
+  Verify and update QuickLook.MediaInfo multilanguage support against a MediaInfo
+  GitHub release (latest by default, or a user-specified version). Syncs
+  MediaInfoLanguage enum, LanguageExtension.SupportedCodes, and embedded
+  Resource/Plugin/Language/*.csv files. Use when: updating language support,
+  syncing language CSVs after a MediaInfo release, checking if languages are
+  up to date with upstream.
+argument-hint: "Optional MediaInfo version (e.g. 26.05 / v26.05). Default: latest release."
 ---
 
-# 更新 MediaInfo 多语言支持
+# Update MediaInfo language support
 
-## 何时使用
+## When to use
 
-- 需要检查 `Language_ISO639` 枚举是否与 MediaInfo 上游同步
-- MediaInfo 发布新版本后更新语言列表
-- 发现语言代码缺失或多余时
+- Check whether `MediaInfoLanguage` matches upstream MediaInfo
+- After a MediaInfo release, refresh language codes and CSV resources
+- Fix missing/extra language codes or stale embedded language CSVs
 
-## 权威来源
+## Version selection (required)
 
-MediaInfo 实际支持的语言由其源码中的 CSV 文件决定，位于：
-- **GitHub（上游）**：`https://github.com/MediaArea/MediaInfo/tree/master/Source/Resource/Plugin/Language`
-- **本地克隆（首选）**：`<MediaInfo仓库根目录>/Source/Resource/Plugin/Language/`
+**Always pin to a MediaInfo GitHub release tag. Never use `master` / HEAD tip.**
 
-每个 CSV 文件的文件名（不含扩展名）就是对应的语言代码（如 `zh-CN.csv` → `zh-CN`）。
-
-## 步骤
-
-### 1. 获取权威语言列表
-
-**优先使用本地仓库**（速度快、无网络依赖）：
+1. If the user specified a version (e.g. `26.05`, `v26.05`, `26.5`), normalize it to a tag:
+   - Accept `YY.MM`, `YY.M`, or `vYY.MM`
+   - Canonical tag form: `v` + zero-padded month → `v26.05` (not `v26.5`)
+2. If the user did **not** specify a version, resolve the **latest** release:
 
 ```powershell
-# 替换为实际的 MediaInfo 本地路径
-$langDir = "D:\GitHub\MediaInfo\Source\Resource\Plugin\Language"
+$latest = gh release view --repo MediaArea/MediaInfo --json tagName -q .tagName
+# e.g. "v26.05"
+$tag = $latest
+```
+
+Fallback without `gh`:
+
+```powershell
+$rel = Invoke-RestMethod `
+    "https://api.github.com/repos/MediaArea/MediaInfo/releases/latest" `
+    -Headers @{ "User-Agent" = "QuickLook.MediaInfo" }
+$tag = $rel.tag_name
+```
+
+3. Confirm the resolved tag with the user only if ambiguous; otherwise state it clearly in the summary (e.g. “syncing against MediaInfo `v26.05`”).
+
+### Resolve language directory for that tag
+
+**Preferred — local clone at the release tag** (fast, no network for file content):
+
+```powershell
+$mediaInfoRoot = "D:\GitHub\MediaInfo"   # or path provided by user
+Push-Location $mediaInfoRoot
+git fetch --tags origin
+git checkout $tag
+Pop-Location
+$langDir = Join-Path $mediaInfoRoot "Source\Resource\Plugin\Language"
+```
+
+**If no local clone — GitHub Contents API with `?ref=`**:
+
+```powershell
+$resp = Invoke-RestMethod `
+    "https://api.github.com/repos/MediaArea/MediaInfo/contents/Source/Resource/Plugin/Language?ref=$tag" `
+    -Headers @{ "User-Agent" = "QuickLook.MediaInfo" }
+```
+
+Do **not** call the API (or read local files) without pinning `ref` / checkout to `$tag`.
+
+## Authoritative source
+
+MediaInfo languages are defined by CSV files under:
+
+`Source/Resource/Plugin/Language/*.csv`
+
+Each CSV basename is the language code (`zh-CN.csv` → `zh-CN`).
+
+## Project files to update
+
+| File | Role |
+| ---- | ---- |
+| `src/QuickLook.MediaInfo/Core/MediaInfoLanguage.cs` | `MediaInfoLanguage` enum + `[Description("code")]` |
+| `src/QuickLook.MediaInfo/Core/LanguageExtension.cs` | `SupportedCodes` (semicolon-separated, **alphabetically sorted**) |
+| `src/QuickLook.MediaInfo/Resource/Plugin/Language/*.csv` | Embedded language resources (must match release CSVs **byte-for-byte**) |
+| `tests/QuickLook.MediaInfo.Tests/GetInformTests.cs` | Optional: add `[InlineData(MediaInfoLanguage.…)]` for new languages |
+
+> Note: older docs may say `Language_ISO639.cs` — the current type is `MediaInfoLanguage` in `MediaInfoLanguage.cs`.
+
+## Steps
+
+### 1. List upstream codes for `$tag`
+
+```powershell
 $csvCodes = Get-ChildItem $langDir -Filter "*.csv" |
     Select-Object -ExpandProperty BaseName | Sort-Object
 $csvCodes
 ```
 
-**若无本地仓库，则抓取 GitHub API**：
+Or from the GitHub API `$resp` above: take entries whose `name` ends with `.csv`, strip extension, sort.
+
+### 2. Diff enum and local resources
 
 ```powershell
-$resp = Invoke-RestMethod `
-    "https://api.github.com/repos/MediaArea/MediaInfo/contents/Source/Resource/Plugin/Language" `
-    -Headers @{ "User-Agent" = "QuickLook.MediaInfo" }
-$csvCodes = $resp | Where-Object { $_.name -like "*.csv" } |
-    ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_.name) } |
-    Sort-Object
-$csvCodes
-```
-
-### 2. 比对现有枚举
-
-读取 `src/QuickLook.MediaInfo/Core/Language_ISO639.cs`，提取所有 `[Description("...")]` 属性值，与步骤 1 的列表比对：
-
-```powershell
-$file = "src\QuickLook.MediaInfo\Core\Language_ISO639.cs"
-$existing = (Select-String -Path $file -Pattern '\[Description\("([^"]+)"\)\]').Matches |
+$enumFile = "src\QuickLook.MediaInfo\Core\MediaInfoLanguage.cs"
+$existing = (Select-String -Path $enumFile -Pattern '\[Description\("([^"]+)"\)\]').Matches |
     ForEach-Object { $_.Groups[1].Value } | Sort-Object
 
-$toAdd    = $csvCodes | Where-Object { $_ -notin $existing }
-$toRemove = $existing | Where-Object { $_ -notin $csvCodes }
+$localResDir = "src\QuickLook.MediaInfo\Resource\Plugin\Language"
+$localCsv = Get-ChildItem $localResDir -Filter "*.csv" |
+    Select-Object -ExpandProperty BaseName | Sort-Object
 
-"需要新增: $toAdd"
-"需要删除: $toRemove"
+$toAddEnum    = $csvCodes | Where-Object { $_ -notin $existing }
+$toRemoveEnum = $existing | Where-Object { $_ -notin $csvCodes }
+$toAddRes     = $csvCodes | Where-Object { $_ -notin $localCsv }
+$toRemoveRes  = $localCsv | Where-Object { $_ -notin $csvCodes }
 ```
 
-### 3. 更新 Language_ISO639.cs
+Also compare file hashes for codes present on both sides; any mismatch must be overwritten from the release.
 
-- **新增**：在枚举末尾（`Albanian` 之前或之后）插入新条目，格式：
-  ```csharp
-  [Description("xx")] XxxLanguageName,
-  ```
-  枚举名使用英文语言名（Pascal Case）。
-- **删除**：移除对应的枚举条目。
+### 3. Update `MediaInfoLanguage.cs`
 
-### 4. 更新 LanguageExtension.cs
+- **Add**: new enum members with `[Description("xx")]` and PascalCase English names.
+- **Remove**: members whose codes disappeared upstream.
+- Keep the XML doc comment code list in sync (alphabetically sorted).
 
-同步更新 `SupportedCodes` 字符串，保持与枚举一致（分号分隔、按字母排序）：
+### 4. Update `LanguageExtension.cs`
+
+Set `SupportedCodes` to the full sorted code list:
 
 ```csharp
 private static readonly string[] SupportedCodes =
-    "ar;be;bg;...所有代码按字母排序..."
+    "ar;be;bg;...alphabetically sorted..."
     .Split(';');
 ```
 
-### 5. 更新 GetInformTests.cs 中的语言测试（可选）
+### 5. Sync resource CSV files
 
-`[InlineData(Language_ISO639.XxxLanguageName)]` 测试用例可根据新增语言补充。
+Copy **all** upstream `*.csv` for `$tag` into `src/QuickLook.MediaInfo/Resource/Plugin/Language/`:
 
-### 6. 构建验证
+- Overwrite existing files from the release
+- Add missing files
+- Delete local CSVs that are no longer in the release
+
+```powershell
+$dst = "src\QuickLook.MediaInfo\Resource\Plugin\Language"
+Copy-Item -Path (Join-Path $langDir "*.csv") -Destination $dst -Force
+# Remove extras
+Get-ChildItem $dst -Filter "*.csv" | Where-Object { $_.BaseName -notin $csvCodes } | Remove-Item -Force
+```
+
+When using GitHub API only, download each file’s content (follow `download_url` or decode `content`) for `$tag` and write into `$dst`.
+
+### 6. Tests (optional)
+
+Extend `GetInformTests` `[InlineData(MediaInfoLanguage.…)]` cases when adding major languages.
+
+### 7. Build
 
 ```powershell
 dotnet build QuickLook.MediaInfo.slnx
 ```
 
-确认 0 错误 0 警告。
+Require **0 errors / 0 warnings**.
 
-## 注意事项
+### 8. Report
 
-- `gr` 是 MediaInfo 对希腊语的代码（标准 ISO 639 为 `el`），`LanguageExtension.NormalizeCode` 中有专门映射，勿删。
-- `pt-BR`、`zh-CN`、`zh-HK`、`zh-TW` 是多段代码，`NormalizeCode` 中有特殊处理，勿改为两字母。
-- 枚举名与语言代码之间没有强制对应规则，但约定使用英文语言名（如 `ChineseSimplified` 对应 `zh-CN`）。
+Summarize:
+
+- MediaInfo tag used (`vYY.MM`)
+- Enum adds/removes
+- Resource files added / removed / overwritten
+- Build result
+
+## Notes
+
+- `gr` is MediaInfo’s Greek code (ISO 639 is usually `el`). Do not rename or drop `gr` mappings in `NormalizeCode` if present.
+- `pt-BR`, `zh-CN`, `zh-HK`, `zh-TW` are multi-segment codes; keep special handling in `NormalizeCode`.
+- Enum member names use English language names (e.g. `ChineseSimplified` → `zh-CN`); there is no strict code↔name formula.
+- After finishing, if a local MediaInfo clone was checked out to `$tag`, leave it on that tag or restore the previous branch — do not silently leave dirty unrelated changes.
