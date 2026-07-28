@@ -255,6 +255,16 @@ Build scripts (PowerShell):
 
 .NET 4.6.2, 4.7.2, 4.8, .NET Standard 2.0, .NET Standard 2.1, .NET Core 3.1, .NET 5, 6, 7, 8, 9, 10.
 
+## References
+
+https://github.com/MediaArea/MediaInfoLib/blob/master/Source/MediaInfo/MediaInfo_Config.h
+
+https://github.com/MediaArea/MediaInfoLib/blob/master/Source/MediaInfo/File__Analyse_Automatic.h
+
+https://github.com/MediaArea/MediaInfo/tree/master/Source/Resource/Plugin/Language
+
+https://github.com/MediaArea/MediaInfo/blob/master/Source/Resource/Language.csv
+
 ## License
 
 Copyright (c) 2025-2026 QL-Win Contributors. Licensed under the [MIT License](LICENSE).
