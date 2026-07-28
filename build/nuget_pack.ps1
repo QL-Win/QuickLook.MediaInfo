@@ -26,10 +26,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $nuspecFiles = @(
-    'QuickLook.MediaInfo.Native.win-arm64.nuspec',
-    'QuickLook.MediaInfo.Native.win-x64.nuspec',
-    'QuickLook.MediaInfo.Native.win-x86.nuspec',
-    'QuickLook.MediaInfo.Native.osx-x64.nuspec'
+    'win-arm64.nuspec',
+    'win-x64.nuspec',
+    'win-x86.nuspec',
+    'osx-x64.nuspec'
 )
 
 function Resolve-NuGetExe {
